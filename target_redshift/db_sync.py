@@ -413,7 +413,17 @@ class DbSync:
             }
             for (name, schema) in self.flatten_schema.items()
         ]
-
+        discard_columns = ['"_SDC_DELETED_AT"','"_SDC_UPDATED_AT"','"_SDC_CREATED_AT"']
+        varchar_columns_to_be_replaced = {x['name'] for x in [
+            {
+                "name": safe_column_name(name),
+                "type": column_type(properties_schema),
+                "raw_type": properties_schema['type'][-1]
+            }
+            for (name, properties_schema) in self.flatten_schema.items()
+        ] if 'character varying' in x['type'] and 'time' not in x['raw_type']}
+        for discards in discard_columns:
+            varchar_columns_to_be_replaced.discard(discards)
         with self.open_connection() as connection:
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 inserts = 0
@@ -466,7 +476,10 @@ class DbSync:
                 )
                 self.logger.debug("Running query: {}".format(copy_sql))
                 cur.execute(copy_sql)
-
+                #Step 4/b: Replace Escape Characters in table
+                if len(varchar_columns_to_be_replaced) != 0:
+                    replace_sql = 'UPDATE {table} SET {values}'.format(table=stage_table,values=', '.join([x +' = replace(replace(replace('+x+",'$[ht]',chr(9)),'$[nl]',chr(10)),'$[cr]',chr(13))" for x in varchar_columns_to_be_replaced]))
+                    cur.execute(replace_sql)
                 # Step 5/a: Insert or Update if primary key defined
                 #           Do UPDATE first and second INSERT to calculate
                 #           the number of affected rows correctly
