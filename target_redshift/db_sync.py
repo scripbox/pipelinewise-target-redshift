@@ -73,7 +73,13 @@ def column_type(schema_property, with_length=True):
         column_type = 'numeric'
     elif 'boolean' in property_type:
         column_type = 'boolean'
-
+    #added code to convert jsonb and json to super code starts here # 
+    elif 'jsonb' in property_type:
+        column_type = 'super'
+    elif 'json' in property_type:
+        column_type = 'super'    
+    #added code to convert jsonb and json to super code end here #
+    
     # Add max length to column type if required
     if with_length:
         if column_type == 'character varying' and varchar_length > 0:
