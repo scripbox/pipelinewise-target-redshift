@@ -95,17 +95,25 @@ def column_trans(schema_property):
     column_trans = ''
     if 'object' in property_type or 'array' in property_type:
         column_trans = 'parse_json'
-
+    #gkamiset start
+    logging.info("found comments for gkamiset column_trans {} ".format(column_trans))
+    # gkamiset end
     return column_trans
 
 
 def safe_column_name(name):
+    #gkamiset start
+    logging.info("found comments for gkamiset safe_column_name {} ".format(name).upper())
+    # gkamiset end
     return '"{}"'.format(name).upper()
 
 
 def column_clause(name, schema_property):
     #gkamiset comments added 
     print('column name is '+safe_column_name(name)+' and cloumn type is '+column_type(schema_property))
+    #gkamiset start
+    logging.info('safe_column_name {} column_type_schema_property {}'.format(safe_column_name(name), column_type(schema_property)))
+    # gkamiset end
     #gkamiset comments completed 
     return '{} {}'.format(safe_column_name(name), column_type(schema_property))
 
@@ -425,7 +433,10 @@ class DbSync:
             for (name, schema) in self.flatten_schema.items()
         ]
         #gkamiset start
-        self.logger.info("Generated column with trans:{}".format(columns_with_trans) )
+        self.logger.info('Generated column with trans:{}'.format(columns_with_trans) )
+        #gkamiset start
+        logging.info('using logging info Generated column with trans:{}'.format(columns_with_trans))
+        # gkamiset end
         #gkamiset end
         discard_columns = ['"_SDC_DELETED_AT"','"_SDC_UPDATED_AT"','"_SDC_CREATED_AT"']
         varchar_columns_to_be_replaced = {x['name'] for x in [
@@ -489,6 +500,9 @@ class DbSync:
                     compression_option=compression_option
                 )
                 self.logger.debug("Running query: {}".format(copy_sql))
+                #gkamiset start
+                logging.info('using logging info Running query: {}'.format(copy_sql))
+                # gkamiset end
                 cur.execute(copy_sql)
                 #Step 4/b: Replace Escape Characters in table
                 if len(varchar_columns_to_be_replaced) != 0:
@@ -764,6 +778,9 @@ class DbSync:
         # Create target table if not exists
         if len(found_tables) == 0:
             self.logger.info("Table '{}' does not exist. Creating...".format(table_name_with_schema))
+            #gkamiset start
+            logging.info("using logging info Table '{}' does not exist. Creating...".format(table_name_with_schema))
+            # gkamiset end
             self.create_table_and_grant_privilege()
         else:
             self.logger.info("Table '{}' exists".format(self.schema_name))
