@@ -422,7 +422,9 @@ class DbSync:
             }
             for (name, schema) in self.flatten_schema.items()
         ]
-        self.logger.info("Generated column clauses:{}".format(columns_with_trans) )
+        #gkamiset start
+        self.logger.info("Generated column with trans:{}".format(columns_with_trans) )
+        #gkamiset end
         discard_columns = ['"_SDC_DELETED_AT"','"_SDC_UPDATED_AT"','"_SDC_CREATED_AT"']
         varchar_columns_to_be_replaced = {x['name'] for x in [
             {
@@ -569,7 +571,9 @@ class DbSync:
             )
             for (name, schema) in self.flatten_schema.items()
         ]
+        #gkamiset started
         self.logger.info("Generated column clauses:{}".format(columns) )
+        #gkamiset end
         primary_key = ["PRIMARY KEY ({})".format(', '.join(primary_column_names(stream_schema_message)))] \
             if len(stream_schema_message['key_properties']) else []
 
