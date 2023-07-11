@@ -47,6 +47,9 @@ def validate_config(config):
 def column_type(schema_property, with_length=True):
     property_type = schema_property['type']
     property_format = schema_property['format'] if 'format' in schema_property else None
+    #gkamiset start
+    logging.info("found comments for gkamiset schema property {} , property_type {} , property_format {} ".format(schema_property,property_type,property_format))
+    # gkamiset end
     column_type = 'character varying'
     varchar_length = DEFAULT_VARCHAR_LENGTH
     if schema_property.get('maxLength', 0) > varchar_length:
@@ -54,7 +57,6 @@ def column_type(schema_property, with_length=True):
     if 'object' in property_type or 'array' in property_type:
         column_type = 'character varying'
         varchar_length = LONG_VARCHAR_LENGTH
-
     # Every date-time JSON value is currently mapped to TIMESTAMP WITHOUT TIME ZONE
     #
     # TODO: Detect if timezone postfix exists in the JSON and find if TIMESTAMP WITHOUT TIME ZONE or
