@@ -753,10 +753,12 @@ class DbSync:
         stream_schema_message = self.stream_schema_message
         stream = stream_schema_message['stream']
         self.logger.info("(Re)creating {} table...".format(self.table_name(stream, is_stage)))
+        self.logger.info("using gkamiset json test file (Re)creating {} table...".format(self.table_name(stream, is_stage)))
 
         self.query(self.drop_table_query(is_stage=is_stage))
         self.query(self.create_table_query(is_stage=is_stage))
-
+        self.logger.info("using gkamiset json test file syntax for creating {} table...".format(self.create_table_query(is_stage=is_stage)))
+        
     def create_table_and_grant_privilege(self, is_stage=False):
         self.create_table(is_stage=is_stage)
         self.grant_privilege(self.schema_name, self.grantees, self.grant_select_on_all_tables_in_schema)
