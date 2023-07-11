@@ -102,6 +102,9 @@ def safe_column_name(name):
 
 
 def column_clause(name, schema_property):
+    #gkamiset comments added 
+    print('column name is '+safe_column_name(name)+' and cloumn type is '+column_type(schema_property))
+    #gkamiset comments completed 
     return '{} {}'.format(safe_column_name(name), column_type(schema_property))
 
 
